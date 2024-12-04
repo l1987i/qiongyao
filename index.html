@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>琼瑶经典语录 | 倾城之恋</title>
+    <!-- 添加钢笔手写字体 -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            overflow: hidden;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* 添加信纸背景效果 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px),
+                linear-gradient(#eee .1em, transparent .1em);
+            background-size: 100% 1.2em;
+            background-color: #fff;
+            opacity: 0.3;
+        }
+
+        .container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.8s ease-in;
+        }
+
+        .container.show {
+            opacity: 1;
+        }
+
+        .card {
+            position: absolute;
+            width: calc(100vw - 64px);
+            height: min(70vh, 600px);
+            max-width: 400px;
+            max-height: 600px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08),
+                        0 2px 8px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            user-select: none;
+            text-align: center;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: center center;
+            backface-visibility: hidden;
+            overflow: hidden;
+        }
+
+        /* 添加卡片纸张纹理效果 */
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, 
+                    rgba(255,255,255, 0) 48%, 
+                    rgba(252,252,252, 0.7) 50%, 
+                    rgba(255,255,255, 0) 52%),
+                linear-gradient(-45deg, 
+                    rgba(255,255,255, 0) 48%, 
+                    rgba(252,252,252, 0.7) 50%, 
+                    rgba(255,255,255, 0) 52%);
+            background-size: 200px 200px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 60px;
+            color: rgba(0, 0, 0, 0.05);
+            font-family: Georgia, serif;
+        }
+
+        .quote {
+            font-size: clamp(1rem, 4vw, 1.4rem);
+            line-height: 1.8;
+            color: #2c3e50;
+            margin-bottom: clamp(15px, 4vw, 30px);
+            padding: clamp(10px, 3vw, 20px);
+            font-weight: 500;
+            position: relative;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            z-index: 1;
+        }
+
+        .source {
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            color: #7f8c8d;
+            font-weight: 400;
+            position: relative;
+            padding-top: clamp(10px, 3vw, 20px);
+            z-index: 1;
+        }
+
+        .source::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 2px;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .copy-btn {
+            position: absolute;
+            bottom: clamp(15px, 4vw, 25px);
+            right: clamp(15px, 4vw, 25px);
+            padding: clamp(6px, 2vw, 10px) clamp(12px, 3vw, 20px);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            color: #34495e;
+            transition: all 0.3s ease;
+            z-index: 1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05),
+                       inset 0 1px 1px rgba(255, 255, 255, 0.8);
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08),
+                       inset 0 1px 1px rgba(255, 255, 255, 0.8);
+        }
+
+        .copy-btn.copied {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                width: calc(100vw - 64px);
+                height: 75vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                width: calc(100vw - 64px);
+                height: 70vh;
+            }
+
+            .card::before {
+                font-size: 40px;
+                top: 15px;
+                left: 15px;
+            }
+        }
+
+        /* 添加横屏支持 */
+        @media (orientation: landscape) and (max-height: 600px) {
+            .card {
+                width: calc(70vw - 64px);
+                height: 85vh;
+            }
+
+            .quote {
+                font-size: clamp(0.9rem, 3vw, 1.2rem);
+                margin-bottom: clamp(10px, 3vw, 20px);
+            }
+
+            .source {
+                font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+            }
+        }
+
+        /* 添加小屏幕设备的优化 */
+        @media (max-height: 500px) {
+            .card {
+                padding: 15px;
+            }
+
+            .quote {
+                margin-bottom: 10px;
+            }
+
+            .copy-btn {
+                bottom: 10px;
+                right: 10px;
+                padding: 5px 10px;
+            }
+        }
+
+        /* 添加超大屏幕的��化 */
+        @media (min-width: 1200px) {
+            .card {
+                max-width: 450px;
+                max-height: 650px;
+            }
+
+            .quote {
+                font-size: 1.5rem;
+            }
+
+            .source {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* 添加安全区域适配 */
+        @supports (padding: env(safe-area-inset-bottom)) {
+            .container {
+                padding-bottom: env(safe-area-inset-bottom);
+                padding-top: env(safe-area-inset-top);
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+            }
+        }
+
+        /* 添加页面整体纹理 */
+        .texture-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/png;base64,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');
+            opacity: 0.02;
+            pointer-events: none;
+        }
+
+        /* 添加卡片背景纹理样式 */
+        .card {
+            // ... 原有样式保持不变 ...
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        /* 定义不同的背景纹理类 */
+        .pattern-flower {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M30 30c2-2 4-4 6-4s4 2 6 4-2 4-4 6-4-2-6-4zm0 0c-2 2-4 4-6 4s-4-2-6-4 2-4 4-6 4 2 6 4z' stroke='rgba(136, 136, 136, 0.05)' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .pattern-cloud {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 20c5.523 0 10 4.477 10 10s-4.477 10-10 10-10-4.477-10-10 4.477-10 10-10zm0 2a8 8 0 100 16 8 8 0 000-16z' fill='rgba(136, 136, 136, 0.05)'/%3E%3C/svg%3E");
+        }
+
+        .pattern-star {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 20l3.09 6.26L40 27.35l-5 4.87 1.18 6.88L30 35.86l-6.18 3.24 1.18-6.88-5-4.87 6.91-1.09z' fill='rgba(136, 136, 136, 0.05)'/%3E%3C/svg%3E");
+        }
+
+        .pattern-heart {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 20c3-5 7-7 12-7 6 0 11 4 11 11 0 11-13 19-23 29-10-9-23-18-23-29 0-7 5-11 11-11 5 0 9 2 12 7z' fill='rgba(136, 136, 136, 0.05)'/%3E%3C/svg%3E");
+        }
+
+        .pattern-rain {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 30l2 4m8-4l2 4m8-4l2 4m8-4l2 4' stroke='rgba(136, 136, 136, 0.05)' stroke-width='1'/%3E%3C/svg%3E");
+        }
+
+        /* 小屏幕优化时的内边距调整 */
+        @media (max-width: 360px) {
+            .card {
+                padding: 20px;
+            }
+
+            .quote {
+                padding: clamp(8px, 2vw, 15px);
+            }
+        }
+
+        /* 添加启动页样式 */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease-out;
+        }
+
+        .splash-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .splash-text {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 4rem;
+            color: #333;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            letter-spacing: 0.5rem;
+            animation: fadeIn 0.8s ease-out;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .splash-text::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 2px;
+            background: rgba(0, 0, 0, 0.2);
+            animation: expandLine 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes expandLine {
+            from {
+                width: 0;
+            }
+            to {
+                width: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 添加启动页 -->
+    <div class="splash-screen">
+        <div class="splash-text">琼瑶</div>
+    </div>
+
+    <div class="texture-overlay"></div>
+    <div class="container" id="container"></div>
+
+    <script>
+        // 在原有脚本开始前添加启动页控制代码
+        window.addEventListener('load', () => {
+            const splashScreen = document.querySelector('.splash-screen');
+            const container = document.querySelector('.container');
+            
+            // 1秒后淡出启动页
+            setTimeout(() => {
+                splashScreen.classList.add('fade-out');
+                container.classList.add('show');
+                
+                // 启动页完全消失后移除它
+                setTimeout(() => {
+                    splashScreen.remove();
+                }, 800);
+            }, 1000);
+        });
+
+        const quotes = [
+            { text: "问世间情为何物，直教生死相许。", source: "琼瑶《梅花烙》" },
+            { text: "如果你是一滴水，我就是一片云，如果你是一条河，我就是一座桥。", source: "琼瑶《在水一方》" },
+            { text: "你若安好，便是晴天。", source: "琼瑶《一帘幽梦》" },
+            { text: "年华虚度，空有一身疲倦，只因为在错的时间，遇见了对的人。", source: "琼瑶《庭院深深》" },
+            { text: "我们的缘分，就像是蒲公英的种子，看似轻盈，却在风中飘得太远。", source: "琼瑶《彩霞满天》" },
+            { text: "爱情是一场游戏，输的总是太认真的那个人。", source: "琼瑶《几度夕阳红》" },
+            { text: "我们之间，隔着银河般的距离，却有流星般的相遇。", source: "琼瑶《水云间》" },
+            { text: "缘起缘灭，都是命中注定。", source: "琼瑶《烟锁重楼》" },
+            { text: "爱情不是你想要就能够得到，也不是你想放弃就能够放下。", source: "琼瑶《菟丝花》" },
+            { text: "我们的爱情，就像昙花，美丽却短暂。", source: "琼瑶《月朦胧鸟朦胧》" },
+            { text: "曾经以为，一生一世一双人，却原来，世事难料。", source: "琼瑶《我是一片云》" },
+            { text: "相思是一种病，而你是唯一的解药。", source: "琼瑶《浪花》" },
+            { text: "有些人，一旦错过就不再。", source: "琼瑶《人在天涯》" },
+            { text: "时光荏苒，唯有情深似海。", source: "琼瑶《碧云天》" },
+            { text: "你是我的执念，放不下，忘不掉。", source: "琼瑶《六个梦》" }
+        ];
+
+        // 生成100个卡片的数据
+        const extendedQuotes = [];
+        for (let i = 0; i < 10; i++) {
+            quotes.forEach(quote => {
+                extendedQuotes.push({
+                    text: quote.text,
+                    source: quote.source,
+                    // 为每个重复的卡片添加一个唯一标识
+                    id: `card-${i}-${quote.source}`
+                });
+            });
+        }
+
+        // 打乱卡片顺序
+        const shuffledQuotes = extendedQuotes.sort(() => Math.random() - 0.5);
+
+        const container = document.getElementById('container');
+        let currentIndex = 0;
+        const visibleCards = 3; // 同时显示的卡片数量
+
+        // 阻止页面默认滚动
+        document.body.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+
+        function updateCardPositions() {
+            Array.from(container.children).forEach((card, idx) => {
+                const offset = {
+                    x: (Math.random() - 0.5) * 10,  // 水平偏移 ±5px
+                    y: -idx * 2,                    // 垂直堆叠偏移
+                    rotate: (Math.random() - 0.5) * 3  // 旋转角度 ±1.5度
+                };
+                
+                card.style.transform = `translate(-50%, -50%) 
+                                      translate(${offset.x}px, ${offset.y}px) 
+                                      rotate(${offset.rotate}deg)
+                                      scale(${1 - (idx * 0.02)})`;
+                card.style.zIndex = visibleCards - idx;
+            });
+        }
+
+        function getPatternClass(text) {
+            // 根据文字内容选择合适的背景纹理
+            if (text.includes('花') || text.includes('梅')) return 'pattern-flower';
+            if (text.includes('云') || text.includes('天')) return 'pattern-cloud';
+            if (text.includes('星') || text.includes('月')) return 'pattern-star';
+            if (text.includes('情') || text.includes('爱')) return 'pattern-heart';
+            if (text.includes('泪') || text.includes('雨')) return 'pattern-rain';
+            return 'pattern-heart'; // 默认使用心形图案
+        }
+
+        function createCard(quote, index) {
+            const card = document.createElement('div');
+            card.className = `card ${getPatternClass(quote.text)}`;
+            
+            // 初始位置设置
+            const offset = {
+                x: (Math.random() - 0.5) * 10,
+                y: -index * 2,
+                rotate: (Math.random() - 0.5) * 3
+            };
+            
+            card.style.transform = `translate(-50%, -50%) 
+                                  translate(${offset.x}px, ${offset.y}px) 
+                                  rotate(${offset.rotate}deg)
+                                  scale(${1 - (index * 0.02)})`;
+            card.style.zIndex = visibleCards - index;
+            
+            card.innerHTML = `
+                <div class="quote">${quote.text}</div>
+                <div class="source">——${quote.source}</div>
+                <button class="copy-btn">复制文字</button>
+            `;
+
+            // 添加复制功能
+            const copyBtn = card.querySelector('.copy-btn');
+            copyBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const textToCopy = `${quote.text} ——${quote.source}`;
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    copyBtn.textContent = '已复制';
+                    copyBtn.classList.add('copied');
+                    setTimeout(() => {
+                        copyBtn.textContent = '复制文字';
+                        copyBtn.classList.remove('copied');
+                    }, 1500);
+                });
+            });
+
+            let startX = 0, startY = 0, currentX = 0, currentY = 0;
+            let isDragging = false;
+            let initialOffset = null;
+
+            function handleStart(e) {
+                isDragging = true;
+                card.style.transition = 'none';
+                
+                card.style.zIndex = 1000;
+                
+                if (e.type === "touchstart") {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                } else if (e.type === "mousedown") {
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    e.preventDefault();
+                }
+                
+                initialOffset = offset;
+            }
+
+            function handleMove(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+                
+                if (e.type === "touchmove") {
+                    currentX = e.touches[0].clientX - startX;
+                    currentY = e.touches[0].clientY - startY;
+                } else if (e.type === "mousemove") {
+                    currentX = e.clientX - startX;
+                    currentY = e.clientY - startY;
+                }
+                
+                const rotate = currentX * 0.1;
+                card.style.transform = `translate(-50%, -50%) 
+                                      translate(${currentX}px, ${currentY}px) 
+                                      rotate(${rotate}deg)`;
+            }
+
+            function handleEnd() {
+                if (!isDragging) return;
+                isDragging = false;
+                card.style.transition = 'all 0.5s ease';
+                
+                if (Math.abs(currentX) > 100 || Math.abs(currentY) > 100) {
+                    const direction = currentX < 0 ? -1 : 1;
+                    card.style.transform = `translate(-50%, -50%) 
+                                          translate(${direction * window.innerWidth * 1.5}px, ${currentY}px) 
+                                          rotate(${currentX * 0.1}deg)`;
+                    
+                    setTimeout(() => {
+                        card.remove();
+                        currentIndex++;
+                        
+                        if (currentIndex + visibleCards <= shuffledQuotes.length) {
+                            const newCard = createCard(shuffledQuotes[currentIndex + visibleCards - 1], visibleCards - 1);
+                            container.appendChild(newCard);
+                            updateCardPositions();
+                        }
+                    }, 500);
+                } else {
+                    card.style.zIndex = visibleCards - index;
+                    card.style.transform = `translate(-50%, -50%) 
+                                          translate(${offset.x}px, ${offset.y}px) 
+                                          rotate(${offset.rotate}deg)
+                                          scale(${1 - (index * 0.02)})`;
+                }
+            }
+
+            card.addEventListener('touchstart', handleStart);
+            card.addEventListener('touchmove', handleMove);
+            card.addEventListener('touchend', handleEnd);
+            card.addEventListener('mousedown', handleStart);
+            document.addEventListener('mousemove', handleMove);
+            document.addEventListener('mouseup', handleEnd);
+
+            return card;
+        }
+
+        // 初始化显示前3张卡片
+        for (let i = 0; i < visibleCards; i++) {
+            if (i < shuffledQuotes.length) {
+                const card = createCard(shuffledQuotes[i], i);
+                container.appendChild(card);
+            }
+        }
+
+        // 防止鼠标拖动时选中文本
+        document.addEventListener('selectstart', (e) => {
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>
